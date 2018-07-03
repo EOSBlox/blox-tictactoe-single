@@ -28,8 +28,14 @@ private:
     std::vector<char> board;
 
     uint64_t primary_key() const;
+    void enemyMove();
 
     EOSLIB_SERIALIZE(game, (account)(state)(board))
+
+  private:
+    bool isFree(const uint8_t row, const uint8_t col) const;
+    bool isCross(const uint8_t row, const uint8_t col) const;
+    bool isNought(const uint8_t row, const uint8_t col) const;
   };
 
   using games = eosio::multi_index<N(game), game>;
