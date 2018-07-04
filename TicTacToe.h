@@ -39,6 +39,11 @@ private:
     bool isFree(const uint8_t row, const uint8_t col) const;
     bool isCross(const uint8_t row, const uint8_t col) const;
     bool isNought(const uint8_t row, const uint8_t col) const;
+
+    // Check if (r1,c1) == (r2,c2) but not free.
+    bool isSame(const uint8_t row1, const uint8_t col1, const uint8_t row2,
+                const uint8_t col2) const;
+
     char rowWinner(const uint8_t row) const;
     char colWinner(const uint8_t col) const;
     char diagWinner() const;

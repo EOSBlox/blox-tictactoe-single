@@ -75,20 +75,23 @@ void TicTacToe::game::enemyMove()
 {
   // Check horizontal lines.
   for (uint8_t row = 0; row < 3; row++) {
+    // (o) o o
     // (o) x x
-    if (isFree(row, 0) && isCross(row, 1) && isCross(row, 2)) {
+    if (isFree(row, 0) && isSame(row, 1, row, 2)) {
       board[coord(row, 0)] = 'o';
       return;
     }
 
     // x (o) x
-    else if (isCross(row, 0) && isFree(row, 1) && isCross(row, 2)) {
+    // o (o) o
+    else if (isFree(row, 1) && isSame(row, 0, row, 2)) {
       board[coord(row, 1)] = 'o';
       return;
     }
 
     // x x (o)
-    else if (isCross(row, 0) && isCross(row, 1) && isFree(row, 2)) {
+    // o o (o)
+    else if (isFree(row, 2) && isSame(row, 0, row, 1)) {
       board[coord(row, 2)] = 'o';
       return;
     }
@@ -96,26 +99,26 @@ void TicTacToe::game::enemyMove()
 
   // Check vertical lines.
   for (uint8_t col = 0; col < 3; col++) {
-    // (o)
-    //  x
-    //  x
-    if (isFree(0, col) && isCross(1, col) && isCross(2, col)) {
+    // (o) (o)
+    //  x   o
+    //  x   o
+    if (isFree(0, col) && isSame(1, col, 2, col)) {
       board[coord(0, col)] = 'o';
       return;
     }
 
-    //  x
-    // (o)
-    //  x
-    else if (isCross(0, col) && isFree(1, col) && isCross(2, col)) {
+    //  x   o
+    // (o) (o)
+    //  x   o
+    else if (isFree(1, col) && isSame(0, col, 2, col)) {
       board[coord(1, col)] = 'o';
       return;
     }
 
-    //  x
-    //  x
-    // (o)
-    else if (isCross(0, col) && isCross(1, col) && isFree(2, col)) {
+    //  x   o
+    //  x   o
+    // (o) (o)
+    else if (isFree(2, col) && isSame(0, col, 1, col)) {
       board[coord(2, col)] = 'o';
       return;
     }
@@ -123,49 +126,48 @@ void TicTacToe::game::enemyMove()
 
   // Check diagonal lines
 
-  // (o)
-  //    x
-  //      x
-  if (isFree(0, 0) && isCross(1, 1) && isCross(2, 2)) {
+  // (o)     (o)
+  //    x       o
+  //      x       o
+  if (isFree(0, 0) && isSame(1, 1, 2, 2)) {
     board[coord(0, 0)] = 'o';
   }
 
-  // x
-  //  (o)
-  //     x
-  else if (isCross(0, 0) && isFree(1, 1) && isCross(2, 2)) {
+  // x     o
+  //  (o)   (o)
+  //     x     o
+  else if (isFree(1, 1) && isSame(0, 0, 2, 2)) {
     board[coord(1, 1)] = 'o';
   }
 
-  // x
-  //   x
-  //    (o)
-  else if (isCross(0, 0) && isCross(1, 1) && isFree(2, 2)) {
+  // x      o
+  //   x      o
+  //    (o)    (o)
+  else if (isFree(2, 2) && isSame(0, 0, 1, 1)) {
     board[coord(2, 2)] = 'o';
   }
 
-  //    (o)
-  //   x
-  // x
-  if (isFree(0, 2) && isCross(1, 1) && isCross(2, 1)) {
+  //    (o)    (o)
+  //   x      o
+  // x      o
+  if (isFree(0, 2) && isSame(1, 1, 2, 1)) {
     board[coord(0, 2)] = 'o';
   }
 
-  //     x
-  //  (o)
-  // x
-  else if (isCross(0, 2) && isFree(1, 1) && isCross(2, 0)) {
+  //     x     o
+  //  (o)   (o)
+  // x     o
+  else if (isFree(1, 1) && isSame(0, 2, 2, 0)) {
     board[coord(1, 1)] = 'o';
   }
 
-  //      x
-  //    x
-  // (o)
-  else if (isCross(0, 2) && isCross(1, 1) && isFree(2, 0)) {
+  //      x      o
+  //    x      o
+  // (o)    (o)
+  else if (isFree(2, 0) && isSame(0, 2, 1, 1)) {
     board[coord(2, 0)] = 'o';
   }
 
-  // If no patterns are matched then take the first free one.
   else {
     // If the center isn't taken then take it!
     if (isFree(1, 1)) {
@@ -173,6 +175,7 @@ void TicTacToe::game::enemyMove()
       return;
     }
 
+    // Otherwise take the first available spot.
     for (int c = 0; c < 9; c++) {
       if (board[c] == ' ') {
         board[c] = 'o';
@@ -230,6 +233,13 @@ bool TicTacToe::game::isCross(const uint8_t row, const uint8_t col) const
 bool TicTacToe::game::isNought(const uint8_t row, const uint8_t col) const
 {
   return board[coord(row, col)] == 'o';
+}
+
+bool TicTacToe::game::isSame(const uint8_t row1, const uint8_t col1, const uint8_t row2,
+                             const uint8_t col2) const
+{
+  return ((isCross(row1, col1) && isCross(row2, col2)) ||
+          (isNought(row1, col1) && isNought(row2, col2)));
 }
 
 char TicTacToe::game::rowWinner(const uint8_t row) const
