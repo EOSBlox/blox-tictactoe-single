@@ -49,6 +49,8 @@ void TicTacToe::play(const account_name account, uint8_t row, uint8_t col)
   auto it = games_.find(account);
   eosio_assert(it != games_.end(), "No game for account!");
 
+  eosio_assert(static_cast<State>(it->state) == State::PlayersTurn, "Game is finished!");
+
   const auto c = coord(row, col);
   eosio_assert(it->board[c] == ' ', "Position is occupied!");
 
