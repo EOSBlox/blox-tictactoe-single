@@ -61,7 +61,8 @@ void TicTacToe::play(const account_name account, uint8_t row, uint8_t col)
       game.enemyMove();
       game.moves++;
     }
-    // TODO: Determine state from board, like draw etc.
+
+    game.updateState();
   });
 }
 
@@ -96,22 +97,24 @@ void TicTacToe::game::enemyMove()
   // Check vertical lines.
   for (uint8_t col = 0; col < 3; col++) {
     // (o)
-    // x
-    // x
+    //  x
+    //  x
     if (isFree(0, col) && isCross(1, col) && isCross(2, col)) {
       board[coord(0, col)] = 'o';
       return;
     }
 
-    // x
+    //  x
     // (o)
-    // x
+    //  x
     else if (isCross(0, col) && isFree(1, col) && isCross(2, col)) {
       board[coord(1, col)] = 'o';
       return;
     }
 
-    // x x (o)
+    //  x
+    //  x
+    // (o)
     else if (isCross(0, col) && isCross(1, col) && isFree(2, col)) {
       board[coord(2, col)] = 'o';
       return;
@@ -179,6 +182,47 @@ void TicTacToe::game::enemyMove()
   }
 }
 
+void TicTacToe::game::updateState()
+{
+  for (uint8_t row = 0; row < 3; row++) {
+    const auto sym = rowWinner(row);
+    if (sym == 'o') {
+      state = static_cast<uint8_t>(State::Lost);
+      return;
+    }
+    else if (sym == 'x') {
+      state = static_cast<uint8_t>(State::Won);
+      return;
+    }
+  }
+
+  for (uint8_t col = 0; col < 3; col++) {
+    const auto sym = colWinner(col);
+    if (sym == 'o') {
+      state = static_cast<uint8_t>(State::Lost);
+      return;
+    }
+    else if (sym == 'x') {
+      state = static_cast<uint8_t>(State::Won);
+      return;
+    }
+  }
+
+  const auto sym = diagWinner();
+  if (sym == 'o') {
+    state = static_cast<uint8_t>(State::Lost);
+    return;
+  }
+  else if (sym == 'x') {
+    state = static_cast<uint8_t>(State::Won);
+    return;
+  }
+
+  if (moves == 9) {
+    state = static_cast<uint8_t>(State::Draw);
+  }
+}
+
 bool TicTacToe::game::isFree(const uint8_t row, const uint8_t col) const
 {
   return board[coord(row, col)] == ' ';
@@ -192,6 +236,28 @@ bool TicTacToe::game::isCross(const uint8_t row, const uint8_t col) const
 bool TicTacToe::game::isNought(const uint8_t row, const uint8_t col) const
 {
   return board[coord(row, col)] == 'o';
+}
+
+char TicTacToe::game::rowWinner(const uint8_t row) const
+{
+  const auto v0 = board[coord(row, 0)], v1 = board[coord(row, 1)], v2 = board[coord(row, 2)];
+  return (v0 == v1 && v1 == v2 ? v0 : ' ');
+}
+
+char TicTacToe::game::colWinner(const uint8_t col) const
+{
+  const auto v0 = board[coord(0, col)], v1 = board[coord(1, col)], v2 = board[coord(2, col)];
+  return (v0 == v1 && v1 == v2 ? v0 : ' ');
+}
+
+char TicTacToe::game::diagWinner() const
+{
+  const auto nw = board[coord(0, 0)], c = board[coord(1, 1)], se = board[coord(2, 2)],
+             sw = board[coord(2, 0)], ne = board[coord(0, 2)];
+  if (nw == c && c == se) {
+    return nw;
+  }
+  return (sw == c && c == ne ? sw : ' ');
 }
 
 } // tictactoe

@@ -30,6 +30,7 @@ private:
 
     uint64_t primary_key() const;
     void enemyMove();
+    void updateState();
 
     EOSLIB_SERIALIZE(game, (account)(state)(moves)(board))
 
@@ -37,6 +38,9 @@ private:
     bool isFree(const uint8_t row, const uint8_t col) const;
     bool isCross(const uint8_t row, const uint8_t col) const;
     bool isNought(const uint8_t row, const uint8_t col) const;
+    char rowWinner(const uint8_t row) const;
+    char colWinner(const uint8_t col) const;
+    char diagWinner() const;
   };
 
   using games = eosio::multi_index<N(game), game>;
