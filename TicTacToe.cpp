@@ -184,39 +184,28 @@ void TicTacToe::game::enemyMove()
 
 void TicTacToe::game::updateState()
 {
-  for (uint8_t row = 0; row < 3; row++) {
-    const auto sym = rowWinner(row);
+  const auto checkSym = [this](const char sym) {
+    if (sym == ' ') {
+      return false;
+    }
     if (sym == 'o') {
       setState(State::Lost);
-      return;
     }
     else if (sym == 'x') {
       setState(State::Won);
-      return;
     }
+    return true;
+  };
+
+  for (uint8_t row = 0; row < 3; row++) {
+    if (checkSym(rowWinner(row))) return;
   }
 
   for (uint8_t col = 0; col < 3; col++) {
-    const auto sym = colWinner(col);
-    if (sym == 'o') {
-      setState(State::Lost);
-      return;
-    }
-    else if (sym == 'x') {
-      setState(State::Won);
-      return;
-    }
+    if (checkSym(colWinner(col))) return;
   }
 
-  const auto sym = diagWinner();
-  if (sym == 'o') {
-    setState(State::Lost);
-    return;
-  }
-  else if (sym == 'x') {
-    setState(State::Won);
-    return;
-  }
+  if (checkSym(diagWinner())) return;
 
   if (moves == 9) {
     setState(State::Draw);
