@@ -25,6 +25,7 @@ void TicTacToe::newgame(const account_name account)
   games_.emplace(account, [&](auto &game) {
     game.account = account;
     game.state = static_cast<int>(State::PlayersTurn);
+    game.moves = 0;
     game.board = std::vector<char>(3 * 3, ' ');
   });
 }
@@ -53,8 +54,13 @@ void TicTacToe::play(const account_name account, uint8_t row, uint8_t col)
 
   games_.modify(it, account, [&](auto &game) {
     game.board[c] = 'x';
-    // TODO: check if no move is possible!
-    game.enemyMove();
+    game.moves++;
+
+    // The last move is made by the player.
+    if (game.moves < 9) {
+      game.enemyMove();
+      game.moves++;
+    }
     // TODO: Determine state from board, like draw etc.
   });
 }

@@ -25,12 +25,13 @@ private:
   struct game {
     uint64_t account;
     uint8_t state; ///< Cannot use enum in ABI so we cast to/from uint8_t.
+    uint8_t moves;
     std::vector<char> board;
 
     uint64_t primary_key() const;
     void enemyMove();
 
-    EOSLIB_SERIALIZE(game, (account)(state)(board))
+    EOSLIB_SERIALIZE(game, (account)(state)(moves)(board))
 
   private:
     bool isFree(const uint8_t row, const uint8_t col) const;
