@@ -1,7 +1,5 @@
 #include "TicTacToe.h"
 
-#include <eosiolib/print.hpp>
-
 namespace tictactoe {
 
 static uint8_t coord(const uint8_t row, const uint8_t col)
@@ -24,9 +22,9 @@ void TicTacToe::newgame(const account_name account)
 
   games_.emplace(account, [&](auto &game) {
     game.account = account;
-    game.state = static_cast<int>(State::PlayersTurn);
     game.moves = 0;
     game.board = std::vector<char>(3 * 3, ' ');
+    game.setState(State::PlayersTurn);
   });
 }
 
@@ -189,11 +187,11 @@ void TicTacToe::game::updateState()
   for (uint8_t row = 0; row < 3; row++) {
     const auto sym = rowWinner(row);
     if (sym == 'o') {
-      state = static_cast<uint8_t>(State::Lost);
+      setState(State::Lost);
       return;
     }
     else if (sym == 'x') {
-      state = static_cast<uint8_t>(State::Won);
+      setState(State::Won);
       return;
     }
   }
@@ -201,28 +199,33 @@ void TicTacToe::game::updateState()
   for (uint8_t col = 0; col < 3; col++) {
     const auto sym = colWinner(col);
     if (sym == 'o') {
-      state = static_cast<uint8_t>(State::Lost);
+      setState(State::Lost);
       return;
     }
     else if (sym == 'x') {
-      state = static_cast<uint8_t>(State::Won);
+      setState(State::Won);
       return;
     }
   }
 
   const auto sym = diagWinner();
   if (sym == 'o') {
-    state = static_cast<uint8_t>(State::Lost);
+    setState(State::Lost);
     return;
   }
   else if (sym == 'x') {
-    state = static_cast<uint8_t>(State::Won);
+    setState(State::Won);
     return;
   }
 
   if (moves == 9) {
-    state = static_cast<uint8_t>(State::Draw);
+    setState(State::Draw);
   }
+}
+
+void TicTacToe::game::setState(const State state)
+{
+  this->state = static_cast<uint8_t>(state);
 }
 
 bool TicTacToe::game::isFree(const uint8_t row, const uint8_t col) const

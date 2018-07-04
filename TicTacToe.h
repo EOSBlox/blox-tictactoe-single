@@ -31,6 +31,7 @@ private:
     uint64_t primary_key() const;
     void enemyMove();
     void updateState();
+    void setState(const State state);
 
     EOSLIB_SERIALIZE(game, (account)(state)(moves)(board))
 
