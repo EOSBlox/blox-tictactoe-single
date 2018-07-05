@@ -1,0 +1,31 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="lib/eos.js"></script>
+  <script src="config.js"></script>
+  <script src="TicTacToe.js"></script>
+  <script>
+    function doPlay() {
+      var value = document.getElementById("pos").value.split(",");
+      play(parseInt(value[0]), parseInt(value[1]));
+    }
+  </script>
+</head>
+<body>
+  <button type="button" onclick="newgame();">New Game</button>
+  <button type="button" onclick="endgame();">End Game</button>
+  <br/>
+  <select id="pos">
+    <option value="0,0">0,0</option>
+    <option value="0,1">0,1</option>
+    <option value="0,2">0,2</option>
+    <option value="1,0">1,0</option>
+    <option value="1,1">1,1</option>
+    <option value="1,2">1,2</option>
+    <option value="2,0">2,0</option>
+    <option value="2,1">2,1</option>
+    <option value="2,2">2,2</option>
+  </select>
+  <button type="button" onclick="doPlay();">Play</button>
+</body>
+</html>
